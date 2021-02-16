@@ -1,10 +1,186 @@
 \documentclass{article}
 
 \usepackage{parskip}
+\usepackage{amssymb}
 \usepackage{mathtools}
 \usepackage{fullpage}
+\usepackage{amsthm}
+% \usepackage{chngcntr}							% counter manipulation
+\usepackage{thmtools,thm-restate}	% theorem improvements
+\usepackage[unicode]{hyperref}		% for nice hyperlinks
+\usepackage[english,capitalise,nameinlink,noabbrev]{cleveref}
 
-\title{The Generation of Rank 2 Drinfeld Modular Forms by Eisenstein series: A Computational Approach}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	citecolor=green,
+	urlcolor=black
+}
+
+% use special characters instead of numbers for footnotemarks:
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\newcounter{common}[section]
+% \newcounter{cdiagram}					% commutative diagrams
+\makeatletter
+	\let\c@equation=\c@common
+	\let\c@subsubsection=\c@common
+	\let\c@paragraph=\c@common
+	% \let\c@cdiagram=\c@common
+\makeatother
+% make these not reset at each new (sub)(sub)section
+\counterwithout{subsection}{section}
+\counterwithout{subsubsection}{subsection}
+\counterwithout{paragraph}{subsubsection}
+
+% theorem-like environments
+\declaretheoremstyle[
+	spaceabove=1.5\parskip, spacebelow=0.5\parskip,
+	headfont=\normalfont\bfseries, bodyfont=\itshape,
+	notefont=\mdseries, notebraces={(}{)},
+	headformat=margin, postheadspace={ }, headpunct={.}
+]{myplain}
+\declaretheorem[sibling=common, style=myplain]{lemma}
+\declaretheorem[sibling=common, style=myplain]{theorem}
+\declaretheorem[sibling=common, style=myplain]{proposition}
+\declaretheorem[sibling=common, style=myplain]{corollary}
+\declaretheoremstyle[
+	spaceabove=1.5\parskip, spacebelow=0.5\parskip,
+	headfont=\normalfont\bfseries, bodyfont=\normalfont,
+	notefont=\mdseries, notebraces={(}{)},
+	headformat=margin, postheadspace={ }, headpunct={.}
+]{mydef}
+\declaretheorem[sibling=common, style=mydef]{definition}
+\declaretheorem[sibling=common, style=mydef]{example}
+
+% moving equation tags into the margin
+\newtagform{margin}[\llap]{\hspace{-4pt}}{}
+\usetagform{margin}
+
+% redefining proof environment for less space before
+\expandafter\let\expandafter\oldproof\csname\string\proof\endcsname
+\let\oldendproof\endproof
+\renewenvironment{proof}[1][\proofname]{%
+  \vspace{-1.5\parskip} \oldproof[#1]%
+}{\oldendproof}
+
+%% custom commands
+% primed operators
+% TeXbook 18.44
+\def\p[#1]_#2{
+	\setbox0=\hbox{$\scriptstyle{#2}$}
+	\setbox2=\hbox{$\displaystyle{#1}$}
+	\setbox4=\hbox{${}'\mathsurround=0pt$}
+	\dimen0=.5\wd0 \advance\dimen0 by-.5\wd2
+	\ifdim\dimen0>0pt
+	\ifdim\dimen0>\wd4 \kern\wd4 \else\kern\dimen0\fi\fi
+	\mathop{{#1}'}_{\kern-\wd4 #2}
+}
+\def\sump_#1{\p[\sum]_{#1}}
+\def\prodp_#1{\p[\prod]_{#1}}
+\def\minp_#1{\p[\min]_{#1}}
+\def\maxp_#1{\p[\max]_{#1}}
+% sets
+\newcommand*{\NN}{\mathbb{N}}
+\newcommand*{\NNO}{\mathbb{N}_0}
+\newcommand*{\ZZ}{\mathbb{Z}}
+\newcommand*{\QQ}{\mathbb{Q}}
+\newcommand*{\RR}{\mathbb{R}}
+\newcommand*{\CC}{\mathbb{C}}
+\newcommand*{\CCi}{\mathbb{C}_\infty}
+\newcommand*{\FF}{\mathbb{F}}
+\newcommand*{\PP}{\mathbb{P}}
+\newcommand*{\LL}{\mathcal{L}}
+\renewcommand{\AA}{\mathbb{A}}
+\newcommand*{\cJ}{\mathcal{J}}
+\newcommand*{\finadele}{\AA_F^{fin}}
+\newcommand*{\invertadele}{\bigl(\finadele\bigr)^{\!\times}}
+\newcommand*{\fp}{\mathfrak{p}}
+% \newcommand*{\WeakMF}{\mathfrak{W}}
+\DeclareMathOperator{\WeakMF}{\mathbf{Weak}}
+\newcommand*{\StrongMF}{\mathbf{Strong}}
+\newcommand*{\CuspMF}{\mathbf{Cusp}}
+\newcommand*{\cw}{\mathcal{W}}
+\newcommand*{\cm}{\mathcal{M}}
+\newcommand*{\cs}{\mathcal{S}}
+\newcommand*{\LLi}[2]{\protect\overleftarrow{\LL_{#1}^{#2}}}
+\newcommand*{\LLNRi}{\LLi{N}{r}}
+% arrows
+% \newcommand*{\isoto}{\overset{\sim}{\to}}
+\newcommand*{\isoto}{\xrightarrow{\mathmakebox[1.5ex]{\sim}}}
+\newcommand*{\into}{\hookrightarrow}
+\newcommand*{\onto}{\twoheadrightarrow}
+\newcommand*{\ionto}{\lhook\joinrel\twoheadrightarrow}
+\newcommand*{\xinto}[2][]{\xhookrightarrow[#1]{#2}}
+\newcommand*{\xonto}[2][]{\xrightarrow[#1]{#2}\mathrel{\mkern-14mu}\rightarrow}
+\newcommand*{\xionto}[2][]{\xhookrightarrow[#1]{#2}\mathrel{\mkern-22mu}\rightarrow\mathrel{\mkern6mu}}
+\newcommand*{\mapsfrom}{\mathrel{\reflectbox{\ensuremath{\mapsto}}}}
+% maths operators
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\B}{B}
+\DeclareMathOperator{\D}{D}
+\DeclareMathOperator{\Cl}{Cl}
+\let\Im=\relax \DeclareMathOperator{\Im}{Im}
+\DeclareMathOperator{\Sur}{Sur}
+\DeclareMathOperator{\Inj}{Inj}
+\DeclareMathOperator{\Free}{Free}
+\DeclareMathOperator{\GLL}{GL}
+\newcommand*{\GL}[2][]{\GLL_{#1}\parens{#2}}
+\DeclareMathOperator{\Div}{Div}
+\DeclareMathOperator{\bd}{\partial}
+\DeclareMathOperator{\ord}{ord}
+% differentiation
+\newcommand*{\dd}{\operatorname{d}}
+\newcommand*{\id}[1]{\,\dd{#1}}
+\newcommand*{\dbd}[2][]{\frac{\dd^{#1}}{\dd\!#2^{#1}}}
+% enclosures
+% \mleftright	% fixes spacing around left-(middle-)right delimiters
+% \delimiterfactor=851
+% \delimitershortfall=10pt
+\newcommand*{\set}[1]{\left\{#1\right\}}
+\newcommand*{\setst}[2]{\left\{#1\:\middle|\:#2\right\}}
+\newcommand*{\order}[1]{\!O\!\left(#1\right)\!}
+\newcommand*{\norm}[1]{\left\lVert 1\right\rVert}
+\newcommand*{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand*{\floor}[1]{\left\lfloor#1\right\rfloor}
+\newcommand*{\ceil}[1]{\left\lceil#1\right\rceil}
+\newcommand*{\fracpart}[1]{\left\{#1\right\}}
+\newcommand*{\parens}[1]{\left(#1\right)}
+\newcommand*{\pparens}[1]{\parens{\!\parens{#1}\!}}
+\newcommand*{\brackets}[1]{\left[#1\right]}
+\newcommand*{\braces}[1]{\left\{#1\right\}}
+\newcommand*{\size}{\#}
+\newcommand*{\sizep}[1]{\size\parens{#1}}
+\newcommand*{\sizeset}[1]{\size\set{#1}}
+\newcommand*{\sizesetst}[2]{\size\setst{#1}{#2}}
+\newcommand*{\lquotient}[2]{\left. #1 \middle\backslash #2 \right.}
+\newcommand*{\rquotient}[2]{\left. #1 \middle/ #2 \right.}
+\newcommand*{\lrquotient}[3]{\left. #1 \middle\backslash #2 \middle/ #3 \right.}
+\newcommand*{\cin}[2]{\bigl[{#1}^{#2}\bigr]}
+\newcommand*{\bigO}[1]{\mathcal{O}\parens{#1}}
+\newcommand*{\littleo}[1]{o\parens{#1}}
+\newcommand*{\pcoord}[1]{%
+  \begingroup\lccode`~=`: \lowercase{\endgroup
+  \edef~}{\mathbin{\mathchar\the\mathcode`:}\nobreak}%
+  \left(% opening symbol
+  \begingroup
+  \mathcode`:=\string"8000
+  #1%
+  \endgroup
+  \right)% closing symbol
+}
+% maths text spacing
+\newcommand*{\lrsptext}[1]{\quad\text{#1}\quad}
+\newcommand*{\lsptext}[1]{\quad\text{#1}\ }
+\newcommand*{\rsptext}[1]{\ \text{#1}\quad}
+\newcommand*{\sptext}[1]{\ \text{#1}\ }
+% other
+\newcommand*{\ie}{i.e.\ }
+\newcommand*{\eqtag}{\stepcounter{equation} \tag{\theequation}}
+\newcommand*{\defeq}{\coloneqq}
+\newcommand*{\eqdef}{\eqqcolon}
+
+\title{The Generation of Rank 2 Drinfeld Modular Forms by Eisenstein Series: A Computational Approach}
 \author{Liam Baker}
 \date{\today}
 
