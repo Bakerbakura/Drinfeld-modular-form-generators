@@ -21,12 +21,10 @@
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 
 \newcounter{common}[section]
-% \newcounter{cdiagram}					% commutative diagrams
 \makeatletter
 	\let\c@equation=\c@common
 	\let\c@subsubsection=\c@common
 	\let\c@paragraph=\c@common
-	% \let\c@cdiagram=\c@common
 \makeatother
 % make these not reset at each new (sub)(sub)section
 \counterwithout{subsection}{section}
