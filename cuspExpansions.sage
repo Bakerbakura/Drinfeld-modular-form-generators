@@ -7,7 +7,7 @@
 
 # %%
 # Define base field by prime power:
-# q = 2
+q = 2
 
 # %% [markdown]
 # Calculate the field $F_q$:
@@ -38,14 +38,17 @@ sep_TX = FqTX.hom([T,X],FFqT_X)
 # %%
 def prime_factors(p):
     return set(pr for pr,n in list(p.factor()))
+
 def cross_multiply(l):
     if len(l) == 0:
         return set(1)
     else:
         return set(p*q for p in l[0] for q in cross_multiply(l[1:]))
+
 def all_factors(p):
     list_of_powers = [set(pr^i for i in range(n+1)) for pr,n in list(p.factor())]
     return cross_multiply(list_of_powers)
+
 def is_monicList(l):
     for p in l:
         if p != 0:
@@ -60,8 +63,10 @@ from functools import reduce
 
 def qNorm(p):
     return q^p.degree()
+
 def product(iterable):
     return reduce(operator.mul, iterable, 1)
+
 def EulerPhi(n, p):
     pfs = prime_factors(p)
     pf_norms = [qNorm(pf) for pf in pfs]
@@ -87,6 +92,7 @@ def my_xgcd(l):
 
 # %%
 @cached_function
+
 def numsMod_deg(n):
     if n == 0:
         return [0]
@@ -95,6 +101,7 @@ def numsMod_deg(n):
         return [hm+num for hm in highMonos for num in numsMod_deg(n-1)]
     else:
         raise ValueError
+
 def numsMod(p):
     p = FqT(p)
     return numsMod_deg(p.degree())
@@ -106,22 +113,27 @@ def numsMod(p):
 
 # %%
 @cached_function
+
 def pairsMod_deg(n):
     nums = numsMod_deg(n)
     return [(n1,n2) for n1 in nums for n2 in nums]
+
 def pairsMod(p):
     p = FqT(p)
     return pairsMod_deg(p.degree())
 
 def nonzeroPairs_deg(n):
     return [(n1,n2) for n1,n2 in pairsMod_deg(n) if (n1,n2) != (0,0)]
+
 def nonzeroPairs(p):
     p = FqT(p)
     return nonzeroPairs_deg(p.degree())
 
 @cached_function
+
 def monicPairs_deg(n):
     return [pair for pair in nonzeroPairs_deg(n) if is_monicList(pair)]
+
 def monicPairs(p):
     p = FqT(p)
     return monicPairs_deg(p.degree())
@@ -131,11 +143,13 @@ def monicPairs(p):
 
 # %%
 @cached_function
+
 def cusps(p):
   p = FqT(p)
   return [(p1,p2) for p1,p2 in monicPairs(p) if p.gcd(p1).gcd(p2) == 1]
     
 @cached_function
+
 def biCusps(p):
   p = FqT(p)
   cc = cusps(p)
@@ -151,11 +165,12 @@ def biCusps(p):
 # %%
 # list of all pairs mod `p` which are congruent to the pair `r` modulo `m`,
 # where `m` is a divisor of `p`
+
 def pairsCongruentMod(r, m, p):
-	m, p = FqT(m), FqT(p)
-	if p % m != 0: raise ValueError
-	n = FqT(p/m)
-	return [(m*t1+r[0], m*t2+r[1]) for t1,t2 in pairsMod(n)]
+  m, p = FqT(m), FqT(p)
+  if p % m != 0: raise ValueError
+  n = FqT(p/m)
+  return [(m*t1+r[0], m*t2+r[1]) for t1,t2 in pairsMod(n)]
 
 # pairsCongruentMod((1,0), T, T^2+T)
 
@@ -166,113 +181,113 @@ def pairsCongruentMod(r, m, p):
 import itertools
 
 def reducedTwoPairs(p):
-	p = FqT(p)
-	# list of (indices of) Eisenstein series of weight 1
-	nnzPairs = nonzeroPairs(p)
-	# list of products of two Eisenstein series of weight 1
-	nnzTwoPairs = list(itertools.product(nnzPairs,repeat=2))
-	
-	# passing between products of two Eisenstein series and columns
-	to_idx_dict = dict(zip(nnzTwoPairs,range(len(nnzTwoPairs))))
-	to_twoPair_dict = dict(zip(range(len(nnzTwoPairs)),nnzTwoPairs))
-	
-	# constants
-	zero, one = FqT.zero(), FqT.one()
-	
-	# dict-form of matrix of relations
-	matrix_dict = {}
-	r = 0
-	def add_row(d): # `d` is a dict mapping twoPairs to matrix entries
-		nonlocal r
-		for k,v in d.items():
-			matrix_dict[(r,to_idx_dict[k])] = v
-		r += 1
-	
-	# scaling of left and right elements of product
-	for l in Fq:
-		if l != zero and l != one:
-			for p1,p2 in nnzTwoPairs:
-				lp1 = (l*p1[0], l*p1[1]) # l * p1
-				add_row({(lp1,p2): l, (p1,p2): -one})
-	# print(r+1, "scaling relations")
-	
-	# swapping of elements of products of distinct elements
-	for p1,p2 in itertools.combinations(nnzPairs,2):
-		add_row({(p1,p2): one, (p2,p1): -one})
-	# print(r+1, "with swapping relations")
-	
-	# relations arising from additivity of e_Lambda(z)
-	for pa,pb in nnzTwoPairs:
-		pab = (pa[0]+pb[0], pa[1]+pb[1]) # pa + pb
-		if pab == (zero, zero): continue
+  p = FqT(p)
+  # list of (indices of) Eisenstein series of weight 1
+  nnzPairs = nonzeroPairs(p)
+  # list of products of two Eisenstein series of weight 1
+  nnzTwoPairs = list(itertools.product(nnzPairs,repeat=2))
+  
+  # passing between products of two Eisenstein series and columns
+  to_idx_dict = dict(zip(nnzTwoPairs,range(len(nnzTwoPairs))))
+  to_twoPair_dict = dict(zip(range(len(nnzTwoPairs)),nnzTwoPairs))
+  
+  # constants
+  zero, one = FqT.zero(), FqT.one()
+  
+  # dict-form of matrix of relations
+  matrix_dict = {}
+  r = 0
+  def add_row(d): # `d` is a dict mapping twoPairs to matrix entries
+    nonlocal r
+    for k,v in d.items():
+      matrix_dict[(r,to_idx_dict[k])] = v
+    r += 1
+  
+  # scaling of left and right elements of product
+  for l in Fq:
+    if l != zero and l != one:
+      for p1,p2 in nnzTwoPairs:
+        lp1 = (l*p1[0], l*p1[1]) # l * p1
+        add_row({(lp1,p2): l, (p1,p2): -one})
+  # print(r+1, "scaling relations")
+  
+  # swapping of elements of products of distinct elements
+  for p1,p2 in itertools.combinations(nnzPairs,2):
+    add_row({(p1,p2): one, (p2,p1): -one})
+  # print(r+1, "with swapping relations")
+  
+  # relations arising from additivity of e_Lambda(z)
+  for pa,pb in nnzTwoPairs:
+    pab = (pa[0]+pb[0], pa[1]+pb[1]) # pa + pb
+    if pab == (zero, zero): continue
 
-		if pa == pb:
-			add_row({(pa,pb): one, (pab,pb): -one-one})
-		else:
-			add_row({(pa,pb): one, (pab,pb): -one, (pab,pa): -one})
-	# print(r+1, "with adding relations")
-	
-	# linear relations arising from factorisation of `p`
-	for m in prime_factors(p):
-		n = FqT(p/m)
-		for s in nonzeroPairs(n):
-			for k in nnzPairs:
-				d = {}
-				for t in pairsCongruentMod(s, n, p):
-					d[(t,k)] = one
-			
-				ms = (m*s[0],m*s[1]) # m * s
-				if (ms,k) in d.keys():
-					d[(ms,k)] = d[(ms,k)] - m
-				else:
-					d[(ms,k)] = -m
-			
-				add_row(d)
-	# print(r+1, "with linear factor relations")
-	
-	# square quadratic relations arising from factorisation of `p`
-	for m in prime_factors(p):
-		n = FqT(p/m)
-		for s in nonzeroPairs(n):
-			d = {}
-			for t in pairsCongruentMod(s, n, p):
-				d[(t,t)] = one
-			
-			ms = (m*s[0],m*s[1]) # m * s
-			if (ms,ms) in d.keys():
-				d[(ms,ms)] = d[(ms,ms)] - m^2
-			else:
-				d[(ms,ms)] = -m^2
-			
-			add_row(d)
+    if pa == pb:
+      add_row({(pa,pb): one, (pab,pb): -one-one})
+    else:
+      add_row({(pa,pb): one, (pab,pb): -one, (pab,pa): -one})
+  # print(r+1, "with adding relations")
+  
+  # linear relations arising from factorisation of `p`
+  for m in prime_factors(p):
+    n = FqT(p/m)
+    for s in nonzeroPairs(n):
+      for k in nnzPairs:
+        d = {}
+        for t in pairsCongruentMod(s, n, p):
+          d[(t,k)] = one
+      
+        ms = (m*s[0],m*s[1]) # m * s
+        if (ms,k) in d.keys():
+          d[(ms,k)] = d[(ms,k)] - m
+        else:
+          d[(ms,k)] = -m
+      
+        add_row(d)
+  # print(r+1, "with linear factor relations")
+  
+  # square quadratic relations arising from factorisation of `p`
+  for m in prime_factors(p):
+    n = FqT(p/m)
+    for s in nonzeroPairs(n):
+      d = {}
+      for t in pairsCongruentMod(s, n, p):
+        d[(t,t)] = one
+      
+      ms = (m*s[0],m*s[1]) # m * s
+      if (ms,ms) in d.keys():
+        d[(ms,ms)] = d[(ms,ms)] - m^2
+      else:
+        d[(ms,ms)] = -m^2
+      
+      add_row(d)
 
-	# other quadratic relations arising from factorisation of `p`, for `q = 2`
-	if q == 2:
-		for m in prime_factors(p):
-			n = FqT(p/m)
-			for s in nonzeroPairs(n):
-				d = {}
-				for t1,t2 in itertools.combinations(pairsCongruentMod(s, n, p), 2):
-					d[(t1,t2)] = one
-				
-				ms = (m*s[0],m*s[1]) # m * s
-				for u in nonzeroPairs(m):
-					nu = (n*u[0],n*u[1]) # n * u
-					if (ms,nu) in d.keys():
-						d[(ms,nu)] = d[(ms,nu)] - m
-					else:
-						d[(ms,nu)] = -m
-				
-				add_row(d)
-	
-	nrows, ncols = r+1, len(nnzTwoPairs)
-	# print("Matrix of relations dimensions:", nrows, ncols)
-	mat = matrix(FFqT, nrows, ncols, matrix_dict, sparse=True)
-	# those which are not pivot columns of the echelonised form:
-	# print("Calculating nonpivots:")
-	non_pivots = mat.nonpivots()
-	non_pivot_twoPairs = [to_twoPair_dict[col] for col in non_pivots]
-	return non_pivot_twoPairs
+  # other quadratic relations arising from factorisation of `p`, for `q = 2`
+  if q == 2:
+    for m in prime_factors(p):
+      n = FqT(p/m)
+      for s in nonzeroPairs(n):
+        d = {}
+        for t1,t2 in itertools.combinations(pairsCongruentMod(s, n, p), 2):
+          d[(t1,t2)] = one
+        
+        ms = (m*s[0],m*s[1]) # m * s
+        for u in nonzeroPairs(m):
+          nu = (n*u[0],n*u[1]) # n * u
+          if (ms,nu) in d.keys():
+            d[(ms,nu)] = d[(ms,nu)] - m
+          else:
+            d[(ms,nu)] = -m
+        
+        add_row(d)
+  
+  nrows, ncols = r+1, len(nnzTwoPairs)
+  # print("Matrix of relations dimensions:", nrows, ncols)
+  mat = matrix(FFqT, nrows, ncols, matrix_dict, sparse=True)
+  # those which are not pivot columns of the echelonised form:
+  # print("Calculating nonpivots:")
+  non_pivots = mat.nonpivots()
+  non_pivot_twoPairs = [to_twoPair_dict[col] for col in non_pivots]
+  return non_pivot_twoPairs
 
 # reducedTwoPairs(T^2)
 
@@ -295,6 +310,7 @@ SkewTX.<tau> = FqTX['tau',frob]
 phi_hom = FqT.hom([T+tau],SkewTX)
 
 @cached_function
+
 def phiA(p):
     return sep_TX(phi_hom(FqT(p)).operator_eval(X))
 
@@ -305,6 +321,7 @@ def phiA(p):
 
 # %%
 @cached_function
+
 def primPhiA(p):
     p = FqT(p)
     primes = list(prime_factors(p))
@@ -327,6 +344,7 @@ def phiA_inclExcl_div(p,l):
 
 # %%
 @cached_function
+
 def FqT_adj(N):
     # ext = FFqT_X.quotient(primPhiA(N), 'e1')
     why.<e> = FFqT[]
@@ -339,6 +357,7 @@ def FqT_adj(N):
 
 # %%
 @cached_function
+
 def eA(r,N):
     ext, e1 = FqT_adj(N)
     return phiA(r % N)(e1)
@@ -354,6 +373,7 @@ def eA(r,N):
 
 # %%
 @cached_function
+
 def int_factor(N):
     return FqT(N).radical()
 
@@ -367,6 +387,7 @@ def int_factor(N):
 # exclusive; currently only works if omax < |N|
 # 1 / (eA(r2,N) + phiA(r1,1/X))
 @cached_function
+
 def E2SeriesInfinity(r,N):
     r1,r2 = r
     r1 %= N; r2 %= N
@@ -397,6 +418,7 @@ def E2SeriesInfinity(r,N):
 
 # %%
 @cached_function
+
 def E2Series(r,biCusp,N):
     ((a,b),(c,d)) = biCusp
     R = [((a*r1+c*r2) % N, (b*r1+d*r2) % N) for r1,r2 in r]
@@ -496,7 +518,7 @@ def stats(N):
 def send_and_save(N, pw):
     out = stats(N)
 
-    server = smtplib.SMTP("smtp.office365.com, 587")
+    server = smtplib.SMTP("smtp.office365.com", 587r)
     server.ehlo()
     server.starttls()
     server.login("liambaker@sun.ac.za", pw)
@@ -511,7 +533,8 @@ def send_and_save(N, pw):
 
 def iterate_deg(deg, pw):
     for N in numsMod_deg(deg+1):
-        send_and_save(N, pw)
+        if N.degree() > 0:
+            send_and_save(N, pw)
 
 # %% [markdown]
 # # Exotic Relations
