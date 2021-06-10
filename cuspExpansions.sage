@@ -518,27 +518,15 @@ def stats(N):
         "time taken": str(datetime.timedelta(seconds=end-start))
     }
 
-def send_and_save(N, pw=""):
+def send_and_save(N):
     out = stats(N)
-
-    # # Send mail from Python
-    # # sending mail from inside Sage won't work on the HPC
-    # server = smtplib.SMTP("smtp.office365.com", 587r)
-    # server.ehlo()
-    # server.starttls()
-    # server.login("liambaker@sun.ac.za", pw)
-    # server.sendmail(
-    #     from_addr="liambaker@sun.ac.za", to_addrs="liambaker@sun.ac.za",
-    #     msg=f"Subject: Results for q = {q} and N = {N}\n\n{pprint.pprint(out,width=10)}"
-    # )
-    # server.quit()
 
     # set working directory to script location
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
     os.chdir(dname)
 
-    # save output to text file to be picked up by Linux `mail` program
+    # save output to text file
     with open(f"results/q = {q}, N = {N}.txt", 'w') as file:
         pprint.pprint(out, width=10, stream=file)
     
@@ -547,10 +535,10 @@ def send_and_save(N, pw=""):
         pickle.dump(out, file)
 
 # iterate over all polynomials of a requested degree
-def iterate_deg(deg, pw=""):
+def iterate_deg(deg):
     for pre_N in numsMod_deg(deg):
         N = T^deg +pre_N
-        send_and_save(N, pw)
+        send_and_save(N)
 
 # get requested degree from command line and iterate
 Ndeg = Integer(sys.argv[2])
