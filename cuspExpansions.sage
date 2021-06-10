@@ -468,8 +468,9 @@ import pickle
 import pprint
 # import smtplib
 
-def printTemp(*args):
-    print("\r", *args, end='')
+def printTemp(*args, *kwargs):
+    # print("\r", *args, end='')
+    print(*args, **kwargs)
 
 def stats(N):
     start = time.time()
