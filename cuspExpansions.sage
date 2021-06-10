@@ -9,7 +9,7 @@
 # Define base field by prime power:
 import sys
 
-q = sys.argv[1]
+q = Integer(sys.argv[1])
 
 # %% [markdown]
 # Calculate the field $F_q$:
@@ -553,7 +553,7 @@ def iterate_deg(deg, pw=""):
             send_and_save(N, pw)
 
 # get requested degree from command line and iterate
-Ndeg = sys.argv[2]
+Ndeg = Integer(sys.argv[2])
 iterate_deg(Ndeg)
 
 # %% [markdown]
