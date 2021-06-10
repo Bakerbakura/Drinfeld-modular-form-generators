@@ -7,7 +7,9 @@
 
 # %%
 # Define base field by prime power:
-q = 2
+import sys
+
+q = sys.argv[1]
 
 # %% [markdown]
 # Calculate the field $F_q$:
@@ -459,11 +461,12 @@ def E2SeriesAllCusps(r, N, cutoff):
 # # Rank function
 
 # %%
+import os
 import time
 import datetime
 import pickle
 import pprint
-import smtplib
+# import smtplib
 
 def printTemp(*args):
     print("\r", *args, end='')
@@ -530,18 +533,28 @@ def send_and_save(N, pw=""):
     # )
     # server.quit()
 
+    # set working directory to script location
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(abspath)
+    os.chdir(dname)
+
     # save output to text file to be picked up by Linux `mail` program
-    with open(f"q = {q}, N = {N}.txt", 'w') as file:
+    with open(f"results/q = {q}, N = {N}.txt", 'w') as file:
         pprint.pprint(out, width=10, stream=file)
     
     # pickle output
-    with open(f"q = {q}, N = {N}.pickle", 'w') as file:
+    with open(f"results/q = {q}, N = {N}.pickle", 'w') as file:
         pickle.dump(out, file)
 
+# iterate over all polynomials of a requested degree
 def iterate_deg(deg, pw=""):
     for N in numsMod_deg(deg+1):
         if N.degree() > 0:
             send_and_save(N, pw)
+
+# get requested degree from command line and iterate
+Ndeg = sys.argv[2]
+iterate_deg(Ndeg)
 
 # %% [markdown]
 # # Exotic Relations
