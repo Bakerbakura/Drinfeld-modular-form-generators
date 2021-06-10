@@ -548,9 +548,9 @@ def send_and_save(N, pw=""):
 
 # iterate over all polynomials of a requested degree
 def iterate_deg(deg, pw=""):
-    for N in numsMod_deg(deg+1):
-        if N.degree() > 0:
-            send_and_save(N, pw)
+    for pre_N in numsMod_deg(deg):
+        N = T^deg +pre_N
+        send_and_save(N, pw)
 
 # get requested degree from command line and iterate
 Ndeg = Integer(sys.argv[2])
