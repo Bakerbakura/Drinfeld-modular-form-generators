@@ -518,17 +518,24 @@ def stats(N):
 def send_and_save(N, pw):
     out = stats(N)
 
-    server = smtplib.SMTP("smtp.office365.com", 587r)
-    server.ehlo()
-    server.starttls()
-    server.login("liambaker@sun.ac.za", pw)
-    server.sendmail(
-        from_addr="liambaker@sun.ac.za", to_addrs="liambaker@sun.ac.za",
-        msg=f"Subject: Results for q = {q} and N = {N}\n\n{pprint.pprint(out,width=10)}"
-    )
-    server.quit()
+    # # Send mail from Python
+    # # sending mail from inside Sage won't work on the HPC
+    # server = smtplib.SMTP("smtp.office365.com", 587r)
+    # server.ehlo()
+    # server.starttls()
+    # server.login("liambaker@sun.ac.za", pw)
+    # server.sendmail(
+    #     from_addr="liambaker@sun.ac.za", to_addrs="liambaker@sun.ac.za",
+    #     msg=f"Subject: Results for q = {q} and N = {N}\n\n{pprint.pprint(out,width=10)}"
+    # )
+    # server.quit()
+
+    # save output to text file to be picked up by Linux `mail` program
+    with open(f"q = {q}, N = {N}.txt", 'w') as file:
+        pprint.pprint(out, width=10, stream=file)
     
-    with open(f"q = {q}, N = {N}"+".pickle", 'w') as file:
+    # pickle output
+    with open(f"q = {q}, N = {N}.pickle", 'w') as file:
         pickle.dump(out, file)
 
 def iterate_deg(deg, pw):
