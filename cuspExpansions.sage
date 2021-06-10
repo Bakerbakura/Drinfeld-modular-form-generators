@@ -515,7 +515,7 @@ def stats(N):
         "time taken": str(datetime.timedelta(seconds=end-start))
     }
 
-def send_and_save(N, pw):
+def send_and_save(N, pw=""):
     out = stats(N)
 
     # # Send mail from Python
@@ -538,7 +538,7 @@ def send_and_save(N, pw):
     with open(f"q = {q}, N = {N}.pickle", 'w') as file:
         pickle.dump(out, file)
 
-def iterate_deg(deg, pw):
+def iterate_deg(deg, pw=""):
     for N in numsMod_deg(deg+1):
         if N.degree() > 0:
             send_and_save(N, pw)
