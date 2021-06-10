@@ -543,7 +543,7 @@ def send_and_save(N, pw=""):
         pprint.pprint(out, width=10, stream=file)
     
     # pickle output
-    with open(f"results/q = {q}, N = {N}.pickle", 'w') as file:
+    with open(f"results/q = {q}, N = {N}.pickle", 'wb') as file:
         pickle.dump(out, file)
 
 # iterate over all polynomials of a requested degree
