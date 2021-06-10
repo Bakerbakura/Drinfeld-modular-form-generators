@@ -468,7 +468,7 @@ import pickle
 import pprint
 # import smtplib
 
-def printTemp(*args, *kwargs):
+def printTemp(*args, **kwargs):
     # print("\r", *args, end='')
     print(*args, **kwargs)
 
