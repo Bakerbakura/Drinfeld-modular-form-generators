@@ -1,0 +1,10 @@
+{'N': T^2 + T,
+ 'N, factored': T * (T + 1),
+ 'finalMatrix': 21 x 24 dense matrix over Function field in e defined by e + 1,
+ 'fraction of nonzero entries': 0.1865079365079365,
+ 'full rank of weight 2 D-modular forms': 21,
+ 'number of cusps': 9,
+ 'number of nonzero entries': 94,
+ 'q': 2,
+ 'rank': 21,
+ 'time taken': '0:00:00.874498'}

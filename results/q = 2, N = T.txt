@@ -1,0 +1,14 @@
+{'N': T,
+ 'N, factored': T,
+ 'finalMatrix': [0 0 1 0]
+[1 0 0 0]
+[0 0 0 T]
+[0 T 0 0]
+[0 0 0 0],
+ 'fraction of nonzero entries': 0.2,
+ 'full rank of weight 2 D-modular forms': 5,
+ 'number of cusps': 3,
+ 'number of nonzero entries': 4,
+ 'q': 2,
+ 'rank': 4,
+ 'time taken': '0:00:01.789654'}
