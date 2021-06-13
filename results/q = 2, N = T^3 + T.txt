@@ -7,4 +7,4 @@
  'number of nonzero entries': 7109,
  'q': 2,
  'rank': 132,
- 'time taken': '1:06:43.246634'}
+ 'time taken': '1:35:18.284647'}

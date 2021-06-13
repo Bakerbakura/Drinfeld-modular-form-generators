@@ -1,0 +1,10 @@
+{'N': T^2 + 2*T + 1,
+ 'N, factored': (T + 1)^2,
+ 'finalMatrix': 279 x 162 dense matrix over Function field in e defined by e^6 + (2*T + 2)*e^4 + (T^2 + 2*T + 1)*e^2 + T + 1,
+ 'fraction of nonzero entries': 0.14721890349130493,
+ 'full rank of weight 2 D-modular forms': 117,
+ 'number of cusps': 36,
+ 'number of nonzero entries': 6654,
+ 'q': 3,
+ 'rank': 117,
+ 'time taken': '0:22:07.990024'}

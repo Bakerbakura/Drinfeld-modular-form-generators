@@ -1,0 +1,10 @@
+{'N': T^2 + 2,
+ 'N, factored': (T + 1) * (T + 2),
+ 'finalMatrix': 176 x 144 dense matrix over Function field in e defined by e^4 + T*e^2 + 1,
+ 'fraction of nonzero entries': 0.14484690656565657,
+ 'full rank of weight 2 D-modular forms': 104,
+ 'number of cusps': 32,
+ 'number of nonzero entries': 3671,
+ 'q': 3,
+ 'rank': 104,
+ 'time taken': '1:13:37.098171'}

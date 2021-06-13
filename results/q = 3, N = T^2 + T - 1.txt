@@ -1,0 +1,10 @@
+{'N': T^2 + T + 2,
+ 'N, factored': T^2 + T + 2,
+ 'finalMatrix': 430 x 180 dense matrix over Function field in e defined by e^8 + (T^3 + T + 1)*e^2 + T^2 + T + 2,
+ 'fraction of nonzero entries': 0.14824289405684754,
+ 'full rank of weight 2 D-modular forms': 130,
+ 'number of cusps': 40,
+ 'number of nonzero entries': 11474,
+ 'q': 3,
+ 'rank': 130,
+ 'time taken': '2:53:08.411428'}
