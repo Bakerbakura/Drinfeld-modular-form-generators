@@ -1,0 +1,10 @@
+{'N': T^3 + T + 1,
+ 'N, factored': T^3 + T + 1,
+ 'finalMatrix': 1365 x 336 dense matrix over Function field in e defined by e^7 + (T^4 + T^2 + T)*e^3 + (T^4 + T^3 + T^2 + 1)*e + T^3 + T + 1,
+ 'fraction of nonzero entries': 0.15828754578754578,
+ 'full rank of weight 2 D-modular forms': 231,
+ 'number of cusps': 63,
+ 'number of nonzero entries': 72597,
+ 'q': 2,
+ 'rank': 231,
+ 'time taken': '19:15:28.149966'}
