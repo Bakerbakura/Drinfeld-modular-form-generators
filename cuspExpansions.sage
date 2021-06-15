@@ -465,6 +465,7 @@ import os
 import time
 import datetime
 import pickle
+import lzma
 import pprint
 # import smtplib
 
@@ -531,8 +532,8 @@ def send_and_save(N):
     with open(f"results/q = {q}, N = {N}.txt", 'w') as file:
         pprint.pprint(out, width=10, stream=file)
     
-    # pickle output
-    with open(f"results/q = {q}, N = {N}.pickle", 'wb') as file:
+    # pickle and compress output
+    with lzma.open(f"results/q = {q}, N = {N}.xz", 'wb') as file:
         pickle.dump(out, file)
 
 # iterate over all polynomials of a requested degree
