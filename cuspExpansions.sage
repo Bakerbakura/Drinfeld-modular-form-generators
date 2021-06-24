@@ -464,39 +464,39 @@ def E2SeriesAllCusps(r, N, cutoff):
 import os
 import time
 import datetime
-import pickle
-import lzma
-import pprint
-# import smtplib
 
-def printTemp(*args, **kwargs):
-    # print("\r", *args, end='')
-    print(*args, **kwargs)
+# get number of CPUs from environment variable
+ncpus = Integer(os.getenv('NCPUS', 1))
 
 def stats(N):
     start = time.time()
 
     N = FqT(N)
-    printTemp("Beginning calculation of statistics for", N)
+    print("Beginning calculation of statistics for", N)
 
-    printTemp("Forming set of Eisenstein pairs")
+    print("Forming set of Eisenstein pairs")
     redTwoPairs = reducedTwoPairs(N)
 
-    printTemp("Calculating t-expansions of Eisenstein pairs")
+    print("Calculating t-expansions of Eisenstein pairs")
     cutoff = 2 * qNorm(N) * EulerPhi(2,N) / (q^2-1)
+    # precompute Eisenstein expansions at infinity to avoid repeat calculations
+    E2SeriesInfinity.precompute(
+        set((r,N) for r in nonzeroPairs(N)),
+        num_processes=ncpus
+    )
     cuts = [E2SeriesAllCusps(r, N, cutoff) for r in redTwoPairs]
-    printTemp("Creating final matrix of coefficients")
+    print("Creating final matrix of coefficients")
     mat = matrix(cuts)
     r, c = mat.nrows(), mat.ncols()
-    printTemp(f"Matrix has dimensions {r}×{c}")
+    print(f"Matrix has dimensions {r}×{c}")
 
     rank2 = qNorm(N) * EulerPhi(2,N) / (q^2-1) + EulerPhi(2,N) / (q-1)
-    printTemp(f"Rank of all weight 2 modular forms is {rank2}\n")
+    print(f"Rank of all weight 2 modular forms is {rank2}\n")
 
-    printTemp("Calculating rank of the matrix of coefficients,",
-              f"with {mat.nrows()} rows and {mat.ncols()} columns")
+    print("Calculating rank of the matrix of coefficients,",
+          f"with {mat.nrows()} rows and {mat.ncols()} columns")
     E2rank = mat.rank()
-    printTemp(f"Rank of matrix is {E2rank}\n")
+    print(f"Rank of matrix is {E2rank}\n")
 
     n_nnz = sum(map(
         lambda row: sum(map(lambda entry: entry != 0, row)),
@@ -520,6 +520,18 @@ def stats(N):
         "time taken": str(datetime.timedelta(seconds=end-start))
     }
 
+# %% [markdown]
+# # Calling the rank function and saving its results
+
+# %%
+
+import os
+import sys
+import lzma
+import pickle
+import pprint
+
+@parallel(ncpus)
 def send_and_save(N):
     out = stats(N)
 
@@ -538,9 +550,10 @@ def send_and_save(N):
 
 # iterate over all polynomials of a requested degree
 def iterate_deg(deg):
-    for pre_N in numsMod_deg(deg):
-        N = T^deg +pre_N
-        send_and_save(N)
+    N_list = [T^deg +pre_N for pre_N in numsMod_deg(deg)]
+    # this iteration is necessary to make the parallel computation take place
+    for results in send_and_save(N_list):
+        print("Another one bites the dust")
 
 # get requested degree from command line and iterate
 Ndeg = Integer(sys.argv[2])
@@ -553,27 +566,24 @@ iterate_deg(Ndeg)
 import time
 import datetime
 
-def printTemp(*args):
-    print("\r", *args, end='')
-
 def exoticRelations(N):
     start = time.time()
 
     N = FqT(N)
-    printTemp(f"Beginning calculation of statistics for {N}")
+    print(f"Beginning calculation of statistics for {N}")
 
-    printTemp("Forming set of Eisenstein pairs")
+    print("Forming set of Eisenstein pairs")
     redTwoPairs = reducedTwoPairs(N)
 
-    printTemp("Calculating t-expansions of Eisenstein pairs")
+    print("Calculating t-expansions of Eisenstein pairs")
     cutoff = 2 * qNorm(N) * EulerPhi(2,N) / (q^2-1)
     cuts = [E2SeriesAllCusps(r, N, cutoff) for r in redTwoPairs]
-    printTemp("Creating final matrix of coefficients")
+    print("Creating final matrix of coefficients")
     mat = matrix(cuts)
     r, c = mat.nrows(), mat.ncols()
-    printTemp(f"Matrix has dimensions {r}×{c}")
+    print(f"Matrix has dimensions {r}×{c}")
 
-    printTemp("Finding exotic relations between products",
+    print("Finding exotic relations between products",
               "of two Eisenstein series")
     rel_coeffs = mat.kernel().basis()
     print(f"\r{len(rel_coeffs)} relations:")
