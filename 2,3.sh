@@ -8,4 +8,4 @@ module load app/SageMath/9.2
 sage cuspExpansions.sage 2 3
 
 # email that the computation is complete
-mail -s "q=2, deg=3 computation complete" liambaker@sun.ac.za
+echo "" | mail -s "q=2, deg=3 computation complete" liambaker@sun.ac.za
