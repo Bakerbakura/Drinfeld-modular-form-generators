@@ -9,7 +9,7 @@
 # Define base field by prime power:
 import sys
 
-q = Integer(sys.argv[1])
+q = Integer(sys.argv.get(1,2))
 
 # %% [markdown]
 # Calculate the field $F_q$:
@@ -127,7 +127,7 @@ def pairsMod(p):
 def nonzeroPairs_deg(n):
     return [(n1,n2) for n1,n2 in pairsMod_deg(n) if (n1,n2) != (0,0)]
 
-def nonzeroPairs(p):
+def nonzeroPairsMod(p):
     p = FqT(p)
     return nonzeroPairs_deg(p.degree())
 
@@ -140,6 +140,9 @@ def monicPairs(p):
     p = FqT(p)
     return monicPairs_deg(p.degree())
 
+def coprimePairsMod(p):
+    p = FqT(p)
+    return [(m,n) for m,n in pairsMod(p) if m.gcd(n).gcd(p) == FqT.one()]
 # %% [markdown]
 # ### Lists of cusps
 
@@ -185,7 +188,7 @@ import itertools
 def reducedTwoPairs(p):
   p = FqT(p)
   # list of (indices of) Eisenstein series of weight 1
-  nnzPairs = nonzeroPairs(p)
+  nnzPairs = nonzeroPairsMod(p)
   # list of products of two Eisenstein series of weight 1
   nnzTwoPairs = list(itertools.product(nnzPairs,repeat=2))
   
@@ -232,7 +235,7 @@ def reducedTwoPairs(p):
   # linear relations arising from factorisation of `p`
   for m in prime_factors(p):
     n = FqT(p/m)
-    for s in nonzeroPairs(n):
+    for s in nonzeroPairsMod(n):
       for k in nnzPairs:
         d = {}
         for t in pairsCongruentMod(s, n, p):
@@ -250,7 +253,7 @@ def reducedTwoPairs(p):
   # square quadratic relations arising from factorisation of `p`
   for m in prime_factors(p):
     n = FqT(p/m)
-    for s in nonzeroPairs(n):
+    for s in nonzeroPairsMod(n):
       d = {}
       for t in pairsCongruentMod(s, n, p):
         d[(t,t)] = one
@@ -267,13 +270,13 @@ def reducedTwoPairs(p):
   if q == 2:
     for m in prime_factors(p):
       n = FqT(p/m)
-      for s in nonzeroPairs(n):
+      for s in nonzeroPairsMod(n):
         d = {}
         for t1,t2 in itertools.combinations(pairsCongruentMod(s, n, p), 2):
           d[(t1,t2)] = one
         
         ms = (m*s[0],m*s[1]) # m * s
-        for u in nonzeroPairs(m):
+        for u in nonzeroPairsMod(m):
           nu = (n*u[0],n*u[1]) # n * u
           if (ms,nu) in d.keys():
             d[(ms,nu)] = d[(ms,nu)] - m
@@ -458,6 +461,60 @@ def E2SeriesAllCusps(r, N, cutoff):
     return out
 
 # %% [markdown]
+# # Hypothetical list of linearly independent Eisenstein pairs
+
+# %%
+import itertools
+
+def hypoTwoPairs(p):
+    p = FqT(p)
+    # list of (indices of) Eisenstein series of weight 1
+    nnzPairs = nonzeroPairsMod(p)
+    # list of products of two Eisenstein series of weight 1
+    twoPairs = list(itertools.product(nnzPairs,repeat=2))
+    
+    # constants
+    zero, one = FqT.zero(), FqT.one()
+    
+    # (monic) pairs which together make an element of SL2(A/N)
+    SL2Pairs = [(r1,r2) for r1,r2 in twoPairs if r1[0].degree() < r2[0].degree() and (r1[0]*r2[1]-r1[1]*r2[0]).mod(p) == one and is_monicList(r1)]
+    # print(len(SL2Pairs))
+    
+    # (monic) pairs which give determinants in (A/p)*
+    ApPairs = [(r,r) for r in pairsMod(p) if r[0].gcd(r[1]).gcd(p) == one and is_monicList(r)]
+    # print(len(ApPairs))
+    
+    return SL2Pairs+ApPairs
+
+# %% [markdown]
+# # Homemade matrix rank function
+
+# %%
+# import itertools
+
+# def homeRank(mat):
+#     matt = copy(mat)
+#     rows = [r for r in range(matt.nrows())]
+#     cols = [c for c in range(matt.ncols())]
+#     rank = 0
+
+#     while len(rows) > 0:
+#         # find pivot point
+#         found = False
+
+#         for c in cols:
+#             if found: break
+
+#             for r in rows:
+#                 if matt[r,c] != 0:
+#                     found = True
+#                     pr,pc = r,c
+#                     break
+        
+#         for c in cols:
+
+
+# %% [markdown]
 # # Rank function
 
 # %%
@@ -481,7 +538,7 @@ def stats(N):
     cutoff = 2 * qNorm(N) * EulerPhi(2,N) / (q^2-1)
     # precompute Eisenstein expansions at infinity to avoid repeat calculations
     E2SeriesInfinity.precompute(
-        set((r,N) for r in nonzeroPairs(N)),
+        set((r,N) for r in nonzeroPairsMod(N)),
         num_processes=ncpus
     )
     cuts = [E2SeriesAllCusps(r, N, cutoff) for r in redTwoPairs]
@@ -521,6 +578,63 @@ def stats(N):
     }
 
 # %% [markdown]
+# # Hypothetical rank function
+
+# %%
+
+def hypo_stats(N):
+    start = time.time()
+
+    N = FqT(N)
+    printTemp("Beginning calculation of statistics for", N)
+
+    printTemp("Forming set of Eisenstein pairs")
+    redTwoPairs = hypoTwoPairs(N)
+    
+    printTemp("Calculating t-expansions of Eisenstein pairs")
+    cutoff = 2 * qNorm(N) * EulerPhi(2,N) / (q^2-1)
+    # precompute Eisenstein expansions at infinity to avoid repeat calculations
+    E2SeriesInfinity.precompute(
+        set((r,N) for r in coprimePairsMod(N)),
+        num_processes=ncpus
+    )
+    cuts = [E2SeriesAllCusps(r, N, cutoff) for r in redTwoPairs]
+    printTemp("Creating final matrix of coefficients")
+    mat = matrix(cuts)
+    r, c = mat.nrows(), mat.ncols()
+    printTemp(f"Matrix has dimensions {r}×{c}")
+
+    rank2 = qNorm(N) * EulerPhi(2,N) / (q^2-1) + EulerPhi(2,N) / (q-1)
+    printTemp(f"Rank of all weight 2 modular forms is {rank2}\n")
+
+    printTemp("Calculating rank of the matrix of coefficients,",
+              f"with {mat.nrows()} rows and {mat.ncols()} columns")
+    E2rank = mat.rank()
+    printTemp(f"Rank of matrix is {E2rank}\n")
+
+    n_nnz = sum(map(
+        lambda row: sum(map(lambda entry: entry != 0, row)),
+        mat
+    ))
+    n_mat = mat.nrows() * mat.ncols()
+
+    end = time.time()
+
+
+    return {
+        "q": q,
+        "N": N,
+        "N, factored": N.factor(),
+        "number of cusps": len(biCusps(N)),
+        "final matrix of coefficients": mat,
+        "number of nonzero entries": n_nnz,
+        "fraction of nonzero entries": n_nnz / n_mat,
+        "rank generated by hypothetical Eisenstein series products": E2rank,
+        "number of hypothetical Eisenstein series products": len(redTwoPairs),
+        "full rank of weight 2 Drinfeld modular forms": rank2,
+        "time taken": str(datetime.timedelta(seconds=end-start))
+    }
+# %% [markdown]
 # # Calling the rank function and saving its results
 
 # %%
@@ -555,9 +669,36 @@ def iterate_deg(deg):
     for results in send_and_save(N_list):
         print("Another one bites the dust")
 
+@parallel(ncpus)
+def hypo_send_and_save(N):
+    out = hypo_stats(N)
+
+    # set working directory to script location
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(abspath)
+    os.chdir(dname)
+
+    # save output to text file
+    with open(f"hypo_results/q = {q}, N = {N}.txt", 'w') as file:
+        pprint.pprint(out, width=10, stream=file)
+    
+    # pickle and compress output
+    with lzma.open(f"hypo_results/q = {q}, N = {N}.xz", 'wb') as file:
+        pickle.dump(out, file)
+
+# iterate over all polynomials of a requested degree
+def hypo_iterate_deg(deg):
+    Ns = [T^deg +pre_N for pre_N in numsMod_deg(deg)]
+    for results in hypo_send_and_save(Ns):
+        print("Another one bites the dust")
+
 # get requested degree from command line and iterate
-Ndeg = Integer(sys.argv[2])
-iterate_deg(Ndeg)
+Ndeg = Integer(sys.argv.get(2,2))
+mode = String(sys.argv.get(3,"full"))
+if mode == "hypo":
+    hypo_iterate_deg(Ndeg)
+else: # mode == "full"
+    iterate_deg(Ndeg)
 
 # %% [markdown]
 # # Exotic Relations
