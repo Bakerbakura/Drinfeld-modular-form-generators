@@ -1,0 +1,219 @@
+\documentclass[hyperref = {unicode},aspectratio = 169]{beamer}
+\mode<presentation>
+\usepackage[utf8]{inputenc}				% native UTF-8 characters in file
+\usepackage{amssymb}							% maths symbols
+\usepackage{mathtools}						% loads and improves amsmath
+\usepackage{amsthm}								% theorems
+\usepackage{thmtools,thm-restate}	% theorem improvements
+\usepackage{graphicx}							% loading pictures
+\usepackage{silence}							% suppressing warnings
+\usepackage{tikz-cd}							% commutative diagrams
+\usetikzlibrary{babel}						% allows maths inside tikzcd env
+\usepackage{parskip}							% space between paragraphs
+\usepackage{mleftright}						% slimmer auto-delimiter spacing
+
+\hypersetup{
+	% colorlinks = true,
+	linkcolor = blue,
+	citecolor = green,
+	urlcolor = black
+}
+
+\declaretheorem{proposition}
+
+\setlength{\parskip}{6pt plus 2pt minus 2pt}
+
+\graphicspath{{./images/}}
+
+% use special characters instead of numbers for footnotemarks:
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\hfuzz = 5pt
+\newdimen\hfuzz	% for ignoring small overfull hbox's
+
+\definecolor{uibred1}{RGB}{180, 50, 100}
+\definecolor{uibred}{RGB}{100, 0, 0}
+\definecolor{uibblue}{RGB}{0, 84, 115}
+\definecolor{uibgreen}{RGB}{119, 175, 0}
+\definecolor{uibgreen1}{RGB}{50, 105, 0}
+\definecolor{uiborange}{RGB}{217, 89, 0}
+
+\setbeamertemplate{blocks}[rounded][shadow = false]
+\addtobeamertemplate{block begin}{\pgfsetfillopacity{0.8}}{\pgfsetfillopacity{1}}
+\setbeamercolor{structure}{fg = uibred}
+\setbeamercolor*{block title example}{fg = white,bg = uibred}
+\setbeamercolor*{block body example}{fg = black,bg = uibred!10}
+
+%% custom commands
+% primed operators
+% TeXbook 18.44
+\def\p[#1]_#2{
+	\setbox0 = \hbox{$\scriptstyle{#2}$}
+	\setbox2 = \hbox{$\displaystyle{#1}$}
+	\setbox4 = \hbox{${}'\mathsurround = 0pt$}
+	\dimen0 = .5\wd0 \advance\dimen0 by-.5\wd2
+	\ifdim\dimen0>0pt
+	\ifdim\dimen0>\wd4 \kern\wd4 \else\kern\dimen0\fi\fi
+	\mathop{{#1}'}_{\kern-\wd4 #2}
+}
+\def\sump_#1{\p[\sum]_{#1}}
+\def\prodp_#1{\p[\prod]_{#1}}
+\def\minp_#1{\p[\min]_{#1}}
+\def\maxp_#1{\p[\max]_{#1}}
+% sets
+\newcommand*{\NN}{\mathbb{N}}
+\newcommand*{\NNO}{\mathbb{N}_0}
+\newcommand*{\ZZ}{\mathbb{Z}}
+\newcommand*{\QQ}{\mathbb{Q}}
+\newcommand*{\RR}{\mathbb{R}}
+\newcommand*{\CC}{\mathbb{C}}
+\newcommand*{\CCi}{\mathbb{C}_\infty}
+\newcommand*{\HH}{\mathcal{H}}
+\newcommand*{\FF}{\mathbb{F}}
+\newcommand*{\PP}{\mathbb{P}}
+\newcommand*{\LL}{\mathcal{L}}
+\renewcommand{\AA}{\mathbb{A}}
+\newcommand*{\cJ}{\mathcal{J}}
+\newcommand*{\finadele}{\AA_F^{fin}}
+\newcommand*{\invertadele}{\bigl(\finadele\bigr)^{\!\times}}
+\newcommand*{\fp}{\mathfrak{p}}
+\newcommand*{\WeakMF}{\mathfrak{W}}
+\newcommand*{\StrongMF}{\mathfrak{M}}
+\newcommand*{\CuspMF}{\mathfrak{S}}
+\newcommand*{\cw}{\mathcal{W}}
+\newcommand*{\cm}{\mathcal{M}}
+\newcommand*{\cs}{\mathcal{S}}
+\newcommand*{\LLi}[2]{\protect\overleftarrow{\LL_{#1}^{#2}}}
+\newcommand*{\LLNRi}{\LLi{N}{r}}
+% arrows
+% \newcommand*{\isoto}{\overset{\sim}{\to}}
+\newcommand*{\isoto}{\xrightarrow{\mathmakebox[1.5ex]{\sim}}}
+\newcommand*{\into}{\hookrightarrow}
+\newcommand*{\onto}{\twoheadrightarrow}
+\newcommand*{\ionto}{\lhook\joinrel\twoheadrightarrow}
+\newcommand*{\xinto}[2][]{\xhookrightarrow[#1]{#2}}
+\newcommand*{\xonto}[2][]{\xrightarrow[#1]{#2}\mathrel{\mkern-14mu}\rightarrow}
+\newcommand*{\xionto}[2][]{\xhookrightarrow[#1]{#2}\mathrel{\mkern-22mu}\rightarrow\mathrel{\mkern6mu}}
+\newcommand*{\mapsfrom}{\mathrel{\reflectbox{\ensuremath{\mapsto}}}}
+% maths operators
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\B}{B}
+\DeclareMathOperator{\D}{D}
+\DeclareMathOperator{\Cl}{Cl}
+\let\Im = \relax \DeclareMathOperator{\Im}{Im}
+\DeclareMathOperator{\Sur}{Sur}
+\DeclareMathOperator{\Inj}{Inj}
+\DeclareMathOperator{\Free}{Free}
+\DeclareMathOperator{\GLL}{GL}
+\newcommand*{\GL}[2][]{\GLL_{#1}\parens{#2}}
+\DeclareMathOperator{\SLL}{SL}
+\newcommand*{\SL}[2][]{\SLL_{#1}\parens{#2}}
+\DeclareMathOperator{\Div}{Div}
+\DeclareMathOperator{\bd}{\partial}
+% differentiation
+\newcommand*{\dd}{\operatorname{d}}
+\newcommand*{\id}[1]{\,\dd{#1}}
+\newcommand*{\dbd}[2][]{\frac{\dd^{#1}}{\dd\!#2^{#1}}}
+% enclosures
+\mleftright	% fixes spacing around left-(middle-)right delimiters
+% \delimiterfactor = 851
+\delimitershortfall = 10pt
+\newcommand*{\set}[1]{\left\{#1\right\}}
+\newcommand*{\setst}[2]{\left\{#1\:\middle|\:#2\right\}}
+\newcommand*{\order}[1]{\!O\!\left(#1\right)\!}
+\newcommand*{\norm}[1]{\left\lVert 1\right\rVert}
+\newcommand*{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand*{\floor}[1]{\left\lfloor#1\right\rfloor}
+\newcommand*{\ceil}[1]{\left\lceil#1\right\rceil}
+\newcommand*{\fracpart}[1]{\left\{#1\right\}}
+\newcommand*{\parens}[1]{\left(#1\right)}
+\newcommand*{\pparens}[1]{\parens{\!\parens{#1}\!}}
+\newcommand*{\brackets}[1]{\left[#1\right]}
+\newcommand*{\braces}[1]{\left\{#1\right\}}
+\newcommand*{\size}{\#}
+\newcommand*{\sizep}[1]{\size\parens{#1}}
+\newcommand*{\sizeset}[1]{\size\set{#1}}
+\newcommand*{\sizesetst}[2]{\size\setst{#1}{#2}}
+\newcommand*{\lquotient}[2]{\left. #1 \middle\backslash #2 \right.}
+\newcommand*{\rquotient}[2]{\left. #1 \middle/ #2 \right.}
+\newcommand*{\lrquotient}[3]{\left. #1 \middle\backslash #2 \middle/ #3 \right.}
+\newcommand*{\cin}[2]{\bigl[{#1}^{#2}\bigr]}
+\newcommand*{\bigO}[1]{\mathcal{O}\parens{#1}}
+\newcommand*{\littleo}[1]{o\parens{#1}}
+\newcommand*{\pcoord}[1]{%
+  \begingroup\lccode`~ = `: \lowercase{\endgroup
+  \edef~}{\mathbin{\mathchar\the\mathcode`:}\nobreak}%
+  \left(% opening symbol
+  \begingroup
+  \mathcode`: = \string"8000
+  #1%
+  \endgroup
+  \right)% closing symbol
+}
+% maths text spacing
+\newcommand*{\lrsptext}[1]{\quad\text{#1}\quad}
+\newcommand*{\lsptext}[1]{\quad\text{#1}\ }
+\newcommand*{\rsptext}[1]{\ \text{#1}\quad}
+\newcommand*{\sptext}[1]{\ \text{#1}\ }
+% other
+\newcommand*{\ie}{i.e.\ }
+\newcommand*{\eqtag}{\stepcounter{equation} \tag{\theequation}}
+\newcommand*{\defeq}{\coloneqq}
+\newcommand*{\eqdef}{\eqqcolon}
+
+
+
+\mode<presentation>{
+  \usetheme{ift}
+  %\setbeamercovered{transparent}	% commented because it messes with uncovering lines in align environments
+  \setbeamertemplate{items}[square]
+}
+
+\usefonttheme[onlymath]{serif}
+\setbeamerfont{frametitle}{size = \Large}
+\setbeamertemplate{navigation symbols}{}
+% \AtBeginSection[]{
+% 	\begin{frame} \vfill \centering
+% 	\begin{beamercolorbox}[sep = 8pt,center]{title}
+% 		\usebeamerfont{title}Chapter~\thesection \\\vspace{12pt} \insertsectionhead\par
+% 	\end{beamercolorbox}
+% 	\vfill \end{frame}
+% }
+
+\title[Drinfeld modular forms]
+  {\LARGE Drinfeld modular forms}
+\subtitle{\large IAS Short Talk}
+\author[Liam Baker]{Liam Baker}
+\date[2023/10/05]{5 October 2023}
+\institute[Stellenbosch University]{Department of Mathematical Sciences \\ Stellenbosch University}
+
+
+\begin{document}
+
+\setbeamertemplate{background}{
+  \includegraphics[width = \paperwidth, height = \paperheight]{frontpage_bg_169}
+}
+\setbeamertemplate{footline}[default]
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\setbeamertemplate{background}{
+  \includegraphics[width = \paperwidth, height = \paperheight]{slide_bg_169}
+}
+\setbeamertemplate{footline}[ifttheme]
+
+\include{d_1_classical}
+
+\include{d_2_drinfeld}
+
+\include{d_3_lattices}
+
+\include{d_4_modular_forms}
+
+
+
+
+
+\end{document}

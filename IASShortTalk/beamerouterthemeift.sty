@@ -1,0 +1,38 @@
+% Based on infolines theme by Till Tantau <tantau@users.sourceforge.net>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\mode<presentation>
+
+\definecolor{lbluegreen}{RGB}{90, 0, 0}
+\definecolor{newitem}{RGB}{253,206,2}
+\definecolor{uibred}{RGB}{170,0,0}
+\definecolor{stel}{RGB}{135,27,58}
+
+
+\setbeamercolor{section in footer}{fg = white,bg = stel!75!black}
+\setbeamercolor{subsection in footer}{fg = white,bg = stel}
+\setbeamercolor{pagenumber in footer}{fg = white,bg = stel!90!white}
+
+
+\defbeamertemplate*{footline}{ifttheme}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd = .33\paperwidth,ht = 2.25ex,dp = 1ex,center]{section in footer}%
+    \insertsectionhead
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd = .34\paperwidth,ht = 2.25ex,dp = 1ex,center]{subsection in footer}%
+    \insertsubsectionhead
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd = .34\paperwidth,ht = 2.25ex,dp = 1ex,center]{pagenumber in footer}%
+   \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+%\setbeamersize{text margin left = 1em,text margin right = 1em}
+
+\mode
+<all>
