@@ -1,0 +1,76 @@
+\section{Drinfeld modular forms}
+
+
+\subsection{Set the stage}
+
+\begin{frame} \frametitle{The Drinfeld setting}
+  We now move from the classical setting to that of function field arithmetic.
+  % Most of the data are analogous with more familiar objects:
+
+  \textbf{Function field object} \hfill \textbf{Classical analogue} \pause \\
+  $F$, a fixed global function field \hfill $\QQ$, the rational numbers \pause \\
+  $\abs{\cdot}$, a fixed absolute value on $F$ with associated place $\infty$ \hfill the usual absolute value $\abs{\cdot}$ on $\CC$ \pause \\
+  $A$, the ring of elements of $F$ regular away from $\infty$ \hfill $\ZZ$, the integers \pause \\
+  $\FF_\infty$, the completion of $F$ with respect to $\abs{\cdot}$ \hfill $\RR$, the real numbers \pause \\
+  $\CC_\infty$, the completion of an algebraic closure of $\FF_\infty$ \hfill $\CC$, the complex numbers \pause
+
+  Here, analogously with the classical setting, $A$ is a Dedekind ring.
+  We also consider the positive integer $q$, which is the cardinality of the field of constants of $F$, with associated finite field $\FF_q$.
+\end{frame}
+
+
+\subsection{The only constant is change}
+
+\begin{frame} \frametitle{Differences to the classical setting}
+  In contrast with the classical setting, there are some key differences: \pause
+  \begin{itemize}
+    \item The main rings are of finite characteristic. \pause
+    \item The absolute value $\abs{\cdot}$ is \emph{non-archimedean}; hence analytic issues such as convergence of series are in some ways easier, whereas defining an analytic function is more complex than in the classical case. \pause
+    % \item As previously mentioned, lattices can have arbitrarily high integer rank. \pause
+    \item In general, the elements of $A$ do not uniquely factorise into products of prime elements. However, since $A$ is a Dedekind ring we do have unique factorisation of \emph{ideals} into products of prime ideals. \pause So we henceforth let $N$ be an arbitrary proper ideal of $A$.
+    \item Here $\CC_\infty$ has infinite dimension as a vector space over $\FF_\infty$, whereas $\CC$ has dimension $2$ as a vector space over $\RR$. \pause
+    As a result, whereas lattices in the classical case can have rank at most $2$, here lattices can have arbitrarily high rank. This what makes the theory of `modular forms of higher rank' possible.
+  \end{itemize}
+\end{frame}
+
+
+\subsection{What am I even doing?}
+
+\begin{frame} \frametitle{My work}
+  Whereas most of the theory of Drinfeld modular forms has focused on modular forms of rank $2$, due to the simplicity of dealing with a function of one variable, recent work by Gekeler and Basson, Breuer, and Pink have established theories of Drinfeld modular forms of higher rank. \pause
+  
+  Their approach has been mainly as viewing them as functions of $r-1$ variables, whereas my PhD thesis established a theory viewing them as functions on the space of lattices of higher rank. \pause
+  My current work in this area is on a theory of Hecke operators from this point of view.
+
+  Additionally, in the rank 2 case there is the question of generators for the (graded) algebra of modular forms for the principal congruence subgroup $\Gamma(N)$, where I have some partial computational results.
+\end{frame}
+
+
+\begin{frame} \frametitle{Lattices}
+  \begin{definition}
+    A lattice $\Lambda$ of rank $r$ is a projective $A$-submodule of $\CC_\infty$ of rank $r$ \pause (\ie a subset of $\CC_\infty$ of the form $I_1\psi_1 +\dotsb +I_r\psi_r$ for ideals $I_i \subseteq A$ and $\psi_i \in \CC_\infty$ which are $\FF_\infty$-linearly independent). \pause
+
+    A level $N$ structure for a lattice $\Lambda$ of rank $r$ is an $A$-module bijection $\parens{N^{-1}/A}^r \ionto N^{-1}\Lambda/\Lambda$.
+  \end{definition} \pause
+
+  Every lattice has $\size{\GL[r]{A/N}}$ different level $N$ structures, since $A$ is a Dedekind ring.
+
+  We denote the space of lattices $\Lambda$ of rank $r$ with level $N$ structure $\alpha$ by $\LL_N^r$, and the space of lattices $\Lambda$ of rank $r$ without level structure by $\LL^r$. \pause
+  These are rigid analytic spaces, with left actions of $\gamma \in \GL[2]{A/N}$ and fractional ideals $J \in \cJ(A)$ given by
+  \[ \gamma(\Lambda,\alpha) \defeq (\Lambda, \alpha \circ \gamma^{-1}) \lrsptext{and} J.\Lambda \defeq J^{-1} \Lambda. \]
+\end{frame}
+
+
+\begin{frame} \frametitle{Lattices II}
+  We define metrics $\dd_\LL$ and $\dd_{\LL_N^r}$ on the spaces $\LL^r$ and $\LL_N^r$, leading to their completions $\LL^{\leq r}$ and $\LLNRi$, where the boundaries consist of spaces of lattices of lower rank. \pause
+  \begin{definition} \label{def:strongMForm}
+    A \emph{modular form} of \emph{weight} $k$ and \emph{rank} $r$ for $K(N)$ is a function $f : \LLNRi \to \CCi$ which is: \pause
+    \begin{itemize}
+      \item holomorphic on the interior $\LL_N^r$ of $\LLNRi$\pause,
+      \item homogeneous of degree $-k$\pause, and
+      \item continuous on $\LLNRi$. \pause
+    \end{itemize}
+  \end{definition}
+
+  The left action of $\gamma \in \GL[2]{A/N}$ on $\LLNRi$ translates to a right action on the space of modular forms, by $f|\gamma(\Lambda,\alpha) = f(\Lambda, \alpha \circ \gamma^{-1})$.
+\end{frame}
