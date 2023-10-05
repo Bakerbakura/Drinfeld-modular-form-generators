@@ -13,7 +13,7 @@
     A (classical) modular form $f$ of weight $k \in \NNO$ for the group $\SL[2]{\ZZ}$ is a function on the complex upper half plane $\HH = \setst{z \in \CC}{\Im{z} > 0}$ satisfying the following properties: \pause
     \begin{itemize}
       \item $f$ is complex analytic on $\HH$\pause,
-      \item $f\parens{\frac{az+b}{cz+d}} = (cz+d)^{-k} f(z)$ for all $a,b,c,d \in \ZZ$ such that $ad-bc = 1$\pause, and
+      \item $f\parens{\frac{az+b}{cz+d}} = (cz+d)^{k} f(z)$ for all $a,b,c,d \in \ZZ$ such that $ad-bc = 1$\pause, and
       \item $\abs{f(z)}$ is bounded as $\Im{z} \to +\infty$.\pause \hfill \emph{(holomorphic at infinity)}
     \end{itemize}
   \end{definition}
@@ -27,7 +27,7 @@
   \[ \begin{pmatrix} a & b \\ c & d \end{pmatrix} \begin{pmatrix} z \\ 1 \end{pmatrix} = \begin{pmatrix} az+b \\ cz+d \end{pmatrix} = \frac{1}{cz+d} \begin{pmatrix} \frac{az+b}{cz+d} \\ 1 \end{pmatrix}. \]
   \pause
   The left action of $\SL[2]{\ZZ}$ on $\HH$ translates into a right action on the functions $f : \HH \to \CC$:
-  \[ f|_\gamma : \HH \to \CC, \quad z \mapsto j(\gamma,z)^k f(\gamma z) = (cz+d)^k f\parens{\frac{az+b}{cz+d}}. \]
+  \[ f|_\gamma : \HH \to \CC, \quad z \mapsto j(\gamma,z)^{-k} f(\gamma z) = (cz+d)^{-k} f\parens{\frac{az+b}{cz+d}}. \]
   \pause
   The transformation condition in the previous definition can then be restated more simply: \pause
   \[ f|_\gamma(z) = f(z) \lsptext{for all} \gamma \in \SL[2]{\ZZ}. \]
@@ -35,7 +35,7 @@
 
 
 \begin{frame} \frametitle{Classical modular forms -- Definition 1}
-  The first definition above is that of a modular form for the \emph{full} modular group $\SL[2]{\ZZ}$.
+  The first definition above is that of a modular form for the \emph{full} group $\SL[2]{\ZZ}$.
   More generally, for any $N \in \NN$ we can define a modular form for any \emph{congruence subgroup} $\Gamma \subseteq \SL[2]{\ZZ}$:
   \[ \Gamma \supseteq \Gamma(N) = \setst{\parens{\begin{smallmatrix} a & b \\ c & d \end{smallmatrix}} \in \SL[2]{\ZZ}}{\parens{\begin{smallmatrix} a & b \\ c & d \end{smallmatrix}} \equiv \parens{\begin{smallmatrix} 1 & 0 \\ 0 & 1 \end{smallmatrix}} \pmod{N}}: \pause \]
   \begin{definition}
