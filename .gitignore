@@ -6,3 +6,5 @@
 /**/*.nav
 /**/*.snm
 /**/*.synctex.gz
+
+/matrices*/*.txt
